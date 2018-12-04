@@ -2065,7 +2065,7 @@ input, select, textarea {
 		.dark input[type="reset"]:hover,
 		.dark button:hover,
 		.dark .button:hover {
-			background: rgba(255, 255, 255, 0.25);
+			background: rgba(19, 18, 18, 0.25);
 		}
 
 		.dark input[type="button"].alt,
@@ -2250,6 +2250,10 @@ input, select, textarea {
 			.main > .content.style4 {
 				padding-top: 0;
 				background: #fff;
+			}
+
+			.main > .content.style5 {
+				background: url("images/bgtr.svg") top right no-repeat, url("images/bgbl.svg") bottom left no-repeat, url("images/bgbl.svg") bottom left no-repeat, url("images/overlay.png"), linear-gradient(45deg, #ffdf95, #b9a997, #fff8b7);
 			}
 
 /* Footer */
