@@ -2055,8 +2055,8 @@ input, select, textarea {
 	.dark input[type="reset"],
 	.dark button,
 	.dark .button {
-		background: rgba(255, 255, 255, 0.15);
-		box-shadow: inset 0 0 0 1px #fff;
+		background: rgba(0, 0, 0, 0.671);
+		/* box-shadow: inset 0 0 0 1px #fff; */
 		color: #fff;
 	}
 
@@ -2193,6 +2193,7 @@ input, select, textarea {
 		}
 
 		#header footer {
+			margin-top: 6em;
 			padding-top: 1.5em;
 		}
 
@@ -2364,6 +2365,7 @@ input, select, textarea {
 				}
 
 				#header footer {
+					margin-top: 6em;
 					padding-top: 1.25em;
 				}
 
