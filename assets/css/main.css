@@ -206,9 +206,9 @@ input, select, textarea {
 		border-left-color: rgba(255, 255, 255, 0.5);
 	}
 
-	p, ul, ol, dl, table {
-/* 		margin-bottom: 1em; */
-	}
+/* 	p, ul, ol, dl, table {
+		margin-bottom: 1em;
+	} */
 
 	p {
 		text-align: justify;
