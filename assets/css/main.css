@@ -149,7 +149,7 @@ input, select, textarea {
 
 	.google-maps {
         position: relative;
-        padding-bottom: 75%;
+        padding-bottom: 45%;
         height: 0;
         overflow: hidden;
 	}
