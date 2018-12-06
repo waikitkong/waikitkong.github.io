@@ -147,6 +147,21 @@ input, select, textarea {
 		color: rgba(255, 255, 255, 0.85);
 	}
 
+	.google-maps {
+        position: relative;
+        padding-bottom: 75%;
+        height: 0;
+        overflow: hidden;
+	}
+	
+    .google-maps iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
 	em, i {
 		font-style: italic;
 	}
@@ -2253,7 +2268,7 @@ input, select, textarea {
 			}
 
 			.main > .content.style5 {
-				background: url("images/bgtr.svg") top right no-repeat, url("images/bgbl.svg") bottom left no-repeat, url("images/bgbl.svg") bottom left no-repeat, url("images/overlay.png"), linear-gradient(45deg, #ffdf95, #b9a997, #fff8b7);
+				background: url("images/bgtr.svg") top right no-repeat, url("images/bgbl.svg") bottom left no-repeat, url("images/bgbl.svg") bottom left no-repeat, url("images/overlay.png"), linear-gradient(45deg, #fde8b6, #ddd3c7, #fff8b7);
 			}
 
 /* Footer */
