@@ -158,17 +158,23 @@
       width: 150px;
       height: 150px;
       margin: 0 20px;
+      background: linear-gradient(145deg, #e6e6e6, #d0d0d0);
+      border-radius: 15px;
+      border: 3px solid #b0b0b0;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 
+                  0 4px 8px rgba(0,0,0,0.2);
+      padding: 10px;
     }
     
     .control-btn {
       position: absolute;
-      width: 40px;
-      height: 40px;
-      background-color: #333;
-      border: 2px solid #555;
-      border-radius: 8px;
-      color: white;
-      font-size: 18px;
+      width: 35px;
+      height: 35px;
+      background: linear-gradient(145deg, #4a4a4a, #2a2a2a);
+      border: 2px solid #1a1a1a;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
       display: flex;
@@ -178,33 +184,77 @@
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3),
+                  inset 0 1px 2px rgba(255,255,255,0.1);
     }
     
     .control-btn:active {
-      background-color: #555;
-      transform: scale(0.95);
+      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+      transform: translateY(1px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4),
+                  inset 0 1px 2px rgba(255,255,255,0.1);
     }
     
-    .btn-up { top: 0; left: 55px; }
-    .btn-down { bottom: 0; left: 55px; }
-    .btn-left { top: 55px; left: 0; }
-    .btn-right { top: 55px; right: 0; }
+    .btn-up { 
+      top: 5px; 
+      left: 57px;
+      border-radius: 6px 6px 3px 3px;
+    }
+    .btn-down { 
+      bottom: 5px; 
+      left: 57px;
+      border-radius: 3px 3px 6px 6px;
+    }
+    .btn-left { 
+      top: 57px; 
+      left: 5px;
+      border-radius: 6px 3px 3px 6px;
+    }
+    .btn-right { 
+      top: 57px; 
+      right: 5px;
+      border-radius: 3px 6px 6px 3px;
+    }
     
+    /* Super Famicom inspired pause button */
     .mobile-pause {
-      background-color: #4CAF50;
+      background: linear-gradient(145deg, #8B4A9C, #7A3E88);
       color: white;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 8px;
+      padding: 12px 25px;
+      border: 3px solid #5D2C6B;
+      border-radius: 20px;
       cursor: pointer;
-      font-size: 16px;
-      margin: 10px;
-      transition: all 0.3s ease;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 15px 10px 10px 10px;
+      transition: all 0.2s ease;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3),
+                  inset 0 1px 2px rgba(255,255,255,0.2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     
     .mobile-pause:active {
-      background-color: #45a049;
-      transform: scale(0.95);
+      background: linear-gradient(145deg, #7A3E88, #6B2F74);
+      transform: translateY(2px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4),
+                  inset 0 1px 2px rgba(255,255,255,0.2);
+    }
+    
+    /* Additional retro styling */
+    .control-pad::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, #3a3a3a 30%, transparent 31%);
+      border-radius: 50%;
+      z-index: -1;
     }
     
     @media (max-width: 500px) {
@@ -264,13 +314,13 @@
     
     <div class="mobile-controls">
       <div class="control-pad">
-        <button class="control-btn btn-up" id="btnUp">↑</button>
-        <button class="control-btn btn-down" id="btnDown">↓</button>
-        <button class="control-btn btn-left" id="btnLeft">←</button>
-        <button class="control-btn btn-right" id="btnRight">→</button>
+        <button class="control-btn btn-up" id="btnUp">▲</button>
+        <button class="control-btn btn-down" id="btnDown">▼</button>
+        <button class="control-btn btn-left" id="btnLeft">◄</button>
+        <button class="control-btn btn-right" id="btnRight">►</button>
       </div>
       <br>
-      <button class="mobile-pause" id="mobilePause">Pause</button>
+      <button class="mobile-pause" id="mobilePause">Select</button>
     </div>
   </div>
   
@@ -411,7 +461,7 @@
       gamePaused = false;
       gameOverDiv.style.display = 'none';
       pauseBtn.textContent = 'Pause';
-      document.getElementById('mobilePause').textContent = 'Pause';
+      document.getElementById('mobilePause').textContent = 'Select';
       
       randomFood();
       gameLoop = setInterval(() => {
@@ -426,8 +476,9 @@
       
       gamePaused = !gamePaused;
       const pauseText = gamePaused ? 'Resume' : 'Pause';
+      const mobileText = gamePaused ? 'Resume' : 'Select';
       pauseBtn.textContent = pauseText;
-      document.getElementById('mobilePause').textContent = pauseText;
+      document.getElementById('mobilePause').textContent = mobileText;
     }
     
     // Keyboard controls
