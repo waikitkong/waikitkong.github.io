@@ -146,6 +146,67 @@
       border-color: #777;
     }
     
+    .mobile-controls {
+      display: none;
+      margin-top: 15px;
+      text-align: center;
+    }
+    
+    .control-pad {
+      display: inline-block;
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 0 20px;
+    }
+    
+    .control-btn {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      border: 2px solid #555;
+      border-radius: 8px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    
+    .control-btn:active {
+      background-color: #555;
+      transform: scale(0.95);
+    }
+    
+    .btn-up { top: 0; left: 55px; }
+    .btn-down { bottom: 0; left: 55px; }
+    .btn-left { top: 55px; left: 0; }
+    .btn-right { top: 55px; right: 0; }
+    
+    .mobile-pause {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .mobile-pause:active {
+      background-color: #45a049;
+      transform: scale(0.95);
+    }
+    
     @media (max-width: 500px) {
       .game-container {
         padding: 10px;
@@ -154,6 +215,18 @@
       #gameCanvas {
         width: 300px;
         height: 300px;
+      }
+      
+      .mobile-controls {
+        display: block;
+      }
+      
+      .controls {
+        display: none;
+      }
+      
+      .pause-btn {
+        display: none;
       }
     }
   </style>
@@ -187,6 +260,17 @@
       <p><strong>Controls:</strong></p>
       <p>Arrow Keys or WASD to move</p>
       <p>Space to pause/resume</p>
+    </div>
+    
+    <div class="mobile-controls">
+      <div class="control-pad">
+        <button class="control-btn btn-up" id="btnUp">↑</button>
+        <button class="control-btn btn-down" id="btnDown">↓</button>
+        <button class="control-btn btn-left" id="btnLeft">←</button>
+        <button class="control-btn btn-right" id="btnRight">→</button>
+      </div>
+      <br>
+      <button class="mobile-pause" id="mobilePause">Pause</button>
     </div>
   </div>
   
@@ -229,10 +313,12 @@
     
     // Generate random food position
     function randomFood() {
-      food = {
-        x: Math.floor(Math.random() * tileCount),
-        y: Math.floor(Math.random() * tileCount)
-      };
+      do {
+        food = {
+          x: Math.floor(Math.random() * tileCount),
+          y: Math.floor(Math.random() * tileCount)
+        };
+      } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
     }
     
     // Draw game elements
@@ -265,6 +351,9 @@
     // Move snake
     function moveSnake() {
       if (gamePaused) return;
+      
+      // Don't move if no direction is set
+      if (dx === 0 && dy === 0) return;
       
       const head = {x: snake[0].x + dx, y: snake[0].y + dy};
       
@@ -322,6 +411,7 @@
       gamePaused = false;
       gameOverDiv.style.display = 'none';
       pauseBtn.textContent = 'Pause';
+      document.getElementById('mobilePause').textContent = 'Pause';
       
       randomFood();
       gameLoop = setInterval(() => {
@@ -335,44 +425,167 @@
       if (!gameRunning) return;
       
       gamePaused = !gamePaused;
-      pauseBtn.textContent = gamePaused ? 'Resume' : 'Pause';
+      const pauseText = gamePaused ? 'Resume' : 'Pause';
+      pauseBtn.textContent = pauseText;
+      document.getElementById('mobilePause').textContent = pauseText;
     }
     
     // Keyboard controls
     document.addEventListener('keydown', (e) => {
-      if (!gameRunning && e.key !== ' ') return;
+      // Handle spacebar for pause/resume
+      if (e.key === ' ') {
+        e.preventDefault();
+        togglePause();
+        return;
+      }
       
+      // Handle movement keys
       switch(e.key) {
         case 'ArrowUp':
         case 'w':
         case 'W':
-          if (dy !== 1) { dx = 0; dy = -1; }
+          setDirection(0, -1);
           break;
         case 'ArrowDown':
         case 's':
         case 'S':
-          if (dy !== -1) { dx = 0; dy = 1; }
+          setDirection(0, 1);
           break;
         case 'ArrowLeft':
         case 'a':
         case 'A':
-          if (dx !== 1) { dx = -1; dy = 0; }
+          setDirection(-1, 0);
           break;
         case 'ArrowRight':
         case 'd':
         case 'D':
-          if (dx !== -1) { dx = 1; dy = 0; }
-          break;
-        case ' ':
-          e.preventDefault();
-          togglePause();
+          setDirection(1, 0);
           break;
       }
     });
     
+    // Direction control function
+    function setDirection(newDx, newDy) {
+      // Prevent moving into itself
+      if (gameRunning) {
+        if ((newDx === 1 && dx === -1) || (newDx === -1 && dx === 1) ||
+            (newDy === 1 && dy === -1) || (newDy === -1 && dy === 1)) {
+          return;
+        }
+      }
+      
+      dx = newDx;
+      dy = newDy;
+      
+      // Start game if not running
+      if (!gameRunning) {
+        startGame();
+      }
+    }
+    
     // Button events
     restartBtn.addEventListener('click', startGame);
     pauseBtn.addEventListener('click', togglePause);
+    
+    // Mobile control events
+    document.getElementById('btnUp').addEventListener('click', (e) => {
+      e.preventDefault();
+      setDirection(0, -1);
+    });
+    
+    document.getElementById('btnDown').addEventListener('click', (e) => {
+      e.preventDefault();
+      setDirection(0, 1);
+    });
+    
+    document.getElementById('btnLeft').addEventListener('click', (e) => {
+      e.preventDefault();
+      setDirection(-1, 0);
+    });
+    
+    document.getElementById('btnRight').addEventListener('click', (e) => {
+      e.preventDefault();
+      setDirection(1, 0);
+    });
+    
+    document.getElementById('mobilePause').addEventListener('click', (e) => {
+      e.preventDefault();
+      togglePause();
+    });
+    
+    // Touch event handlers for better mobile experience
+    document.getElementById('btnUp').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      setDirection(0, -1);
+    });
+    
+    document.getElementById('btnDown').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      setDirection(0, 1);
+    });
+    
+    document.getElementById('btnLeft').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      setDirection(-1, 0);
+    });
+    
+    document.getElementById('btnRight').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      setDirection(1, 0);
+    });
+    
+    document.getElementById('mobilePause').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      togglePause();
+    });
+    
+    // Swipe gesture support
+    let startX, startY;
+    
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+    });
+    
+    canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      if (!startX || !startY) return;
+      
+      const touch = e.changedTouches[0];
+      const endX = touch.clientX;
+      const endY = touch.clientY;
+      
+      const deltaX = endX - startX;
+      const deltaY = endY - startY;
+      
+      // Minimum swipe distance
+      const minSwipeDistance = 50;
+      
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (Math.abs(deltaX) > minSwipeDistance) {
+          if (deltaX > 0) {
+            setDirection(1, 0);  // Right
+          } else {
+            setDirection(-1, 0); // Left
+          }
+        }
+      } else {
+        // Vertical swipe
+        if (Math.abs(deltaY) > minSwipeDistance) {
+          if (deltaY > 0) {
+            setDirection(0, 1);  // Down
+          } else {
+            setDirection(0, -1); // Up
+          }
+        }
+      }
+      
+      startX = null;
+      startY = null;
+    });
     
     // Initialize game
     randomFood();
