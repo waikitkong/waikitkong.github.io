@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Where am I? - Waikitleechin</title>
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+        crossorigin=""/>
+  
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .header {
+      text-align: center;
+      padding: 20px;
+      background-color: #111;
+    }
+    
+    .header h1 {
+      margin: 0;
+      color: white;
+    }
+    
+    .back-btn {
+      background-color: #333;
+      color: white;
+      padding: 8px 16px;
+      border: 2px solid #555;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    
+    .back-btn:hover {
+      background-color: #555;
+      border-color: #777;
+    }
+    
+    #map {
+      flex: 1;
+      min-height: 500px;
+      border: 2px solid #333;
+    }
+    
+    .info-panel {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 50px;
+      font-size: 18px;
+    }
+    
+    .error {
+      color: #ff6b6b;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .location-info {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ccc;
+    }
+  </style>
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130548168-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-130548168-1');
+  </script>
+</head>
+<body>
+  <div class="header">
+    <h1>🌍 Where am I?</h1>
+    <a href="index.html" class="back-btn">← Back to Home</a>
+  </div>
+  
+  <div id="loading" class="loading">
+    📍 Finding your location...
+  </div>
+  
+  <div id="map-container" style="display: none;">
+    <div id="map"></div>
+    <div class="info-panel">
+      <div id="location-info" class="location-info"></div>
+    </div>
+  </div>
+  
+  <!-- Leaflet JavaScript -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+          crossorigin=""></script>
+  
+  <script>
+    let map;
+    
+    async function getUserLocation() {
+      try {
+        // Get user's IP and location data
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        
+        if (data.latitude && data.longitude) {
+          displayMap(data.latitude, data.longitude, data);
+        } else {
+          throw new Error('Could not determine location from IP');
+        }
+      } catch (error) {
+        console.error('Error getting location:', error);
+        showError('Sorry, we couldn\'t determine your location. This might be due to network restrictions or if you\'re using a VPN.');
+      }
+    }
+    
+    function displayMap(lat, lng, locationData) {
+      // Hide loading message
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('map-container').style.display = 'block';
+      
+      // Initialize the map
+      map = L.map('map').setView([lat, lng], 13);
+      
+      // Add OpenStreetMap tiles
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+      
+      // Add a marker for the user's location
+      const marker = L.marker([lat, lng]).addTo(map);
+      
+      // Create popup content
+      const popupContent = `
+        <div style="color: black; text-align: center;">
+          <strong>📍 You are here!</strong><br>
+          ${locationData.city ? locationData.city + ', ' : ''}
+          ${locationData.region ? locationData.region + ', ' : ''}
+          ${locationData.country_name || 'Unknown location'}
+        </div>
+      `;
+      
+      marker.bindPopup(popupContent).openPopup();
+      
+      // Display location information
+      const locationInfo = document.getElementById('location-info');
+      locationInfo.innerHTML = `
+        <strong>Your approximate location:</strong><br>
+        📍 ${locationData.city || 'Unknown city'}, ${locationData.region || 'Unknown region'}, ${locationData.country_name || 'Unknown country'}<br>
+        🌐 Coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)}<br>
+        🌍 IP Address: ${locationData.ip || 'Unknown'}<br>
+        <small style="color: #888;">* Location is approximate based on your IP address</small>
+      `;
+    }
+    
+    function showError(message) {
+      document.getElementById('loading').innerHTML = `
+        <div class="error">
+          ❌ ${message}
+          <br><br>
+          <a href="index.html" class="back-btn">← Back to Home</a>
+        </div>
+      `;
+    }
+    
+    // Start the location detection when page loads
+    window.addEventListener('load', getUserLocation);
+  </script>
+</body>
+</html>

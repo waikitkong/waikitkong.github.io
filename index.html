@@ -9,13 +9,32 @@
       margin: 0;
       background-color: #000;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      font-family: Arial, sans-serif;
     }
     img {
       max-width: 80%;
       height: auto;
+      margin-bottom: 30px;
+    }
+    .location-btn {
+      background-color: #333;
+      color: white;
+      padding: 12px 24px;
+      border: 2px solid #555;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .location-btn:hover {
+      background-color: #555;
+      border-color: #777;
+      transform: translateY(-2px);
     }
   </style>
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -29,5 +48,6 @@
 </head>
 <body>
   <img src="images/waikitleechin logo black.png" alt="Waikitleechin Logo">
+  <a href="location.html" class="location-btn">Where am I?</a>
 </body>
 </html>
